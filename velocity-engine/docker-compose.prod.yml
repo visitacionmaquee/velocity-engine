@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: velocity_postgres_prod_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: production_secure_password_123
+      POSTGRES_DB: velocity_db
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build:
+      context: ./backend
+      target: production
+    container_name: velocity_backend_prod_api
+    restart: always
+    # 👇 THE FIX: Expose port 5000 so the browser can fetch the server metrics
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:production_secure_password_123@db:5432/velocity_db
+      - NODE_ENV=production
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: velocity_frontend_prod_client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_prod_data:
