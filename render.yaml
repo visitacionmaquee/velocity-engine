@@ -3,7 +3,7 @@ databases:
   - name: velocity-db
     plan: free
     databaseName: velocity_db
-    user: velocity_admin # FIXED: Changed from 'postgres' to avoid system reserve conflicts
+    user: velocity_admin
 
 # 2. THE COMPUTE & SERVICE LAYER
 services:
@@ -12,7 +12,7 @@ services:
     name: velocity-backend
     plan: free
     runtime: docker
-    dockerfilePath: ./backend/Dockerfile
+    dockerfilePath: backend/Dockerfile # FIXED: Removed ./ prefix
     envVars:
       - key: PORT
         value: 5000
@@ -26,10 +26,10 @@ services:
     name: velocity-frontend
     plan: free
     runtime: docker
-    dockerfilePath: ./frontend/Dockerfile
+    dockerfilePath: frontend/Dockerfile # FIXED: Removed ./ prefix
     envVars:
       - key: VITE_API_URL
         fromService:
           name: velocity-backend
           type: web
-          property: host # FIXED: Changed from 'url' to Render's valid 'host' resolution property
+          property: host
