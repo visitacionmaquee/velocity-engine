@@ -23,8 +23,9 @@ services:
     name: velocity-frontend
     plan: free
     runtime: docker
-    dockerfilePath: velocity-engine/backend/frontend/Dockerfile
-    dockerContext: velocity-engine/backend/frontend
+    # FIXED: Sibling path, NOT nested inside backend
+    dockerfilePath: velocity-engine/frontend/Dockerfile
+    dockerContext: velocity-engine/frontend
     envVars:
       - key: VITE_API_URL
         fromService:
