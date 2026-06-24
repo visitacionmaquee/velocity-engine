@@ -14,30 +14,31 @@ jobs:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
+    # Setup Node simply without caching blocks to bypass missing lockfiles
     - name: Set up Node.js Runtime
       uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: 'npm'
-        cache-dependency-path: ./backend/package.json
 
+    # Directed to step into your nested subfolder
     - name: Install & Test Backend
       run: |
-        cd backend
+        cd velocity-engine/backend
         npm install
         npm test
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    # Context paths updated to target the subfolder
     - name: Test Build Backend Container Image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
+        context: ./velocity-engine/backend
         push: false 
 
     - name: Test Build Frontend Container Image
       uses: docker/build-push-action@v5
       with:
-        context: ./frontend
+        context: ./velocity-engine/frontend
         push: false
