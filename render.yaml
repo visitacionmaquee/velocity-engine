@@ -1,0 +1,34 @@
+services:
+  # 1. THE DATABASE LAYER
+  - type: db
+    name: velocity-db
+    plan: free
+    databaseName: velocity_db
+    user: postgres
+
+  # 2. THE ENGINE API LAYER (Node.js backend)
+  - type: web
+    name: velocity-backend
+    plan: free
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: velocity-db
+          property: connectionString
+
+  # 3. THE UI DASHBOARD LAYER (React + Nginx frontend)
+  - type: web
+    name: velocity-frontend
+    plan: free
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: velocity-backend
+          type: web
+          property: url
