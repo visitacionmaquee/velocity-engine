@@ -20,7 +20,7 @@ services:
           property: connectionString
 
   - type: web
-    name: velocity-frontend
+    name: velocity-engine-dashboard
     plan: free
     runtime: docker
     # FIXED: Sibling path, NOT nested inside backend
