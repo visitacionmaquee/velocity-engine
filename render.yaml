@@ -1,18 +1,16 @@
-# 1. THE DATABASE LAYER
 databases:
   - name: velocity-db
     plan: free
     databaseName: velocity_db
     user: velocity_admin
 
-# 2. THE COMPUTE & SERVICE LAYER
 services:
-  # ENGINE API LAYER (Node.js backend)
   - type: web
     name: velocity-backend
     plan: free
     runtime: docker
-    dockerfilePath: backend/Dockerfile # FIXED: Removed ./ prefix
+    dockerfilePath: velocity-engine/backend/Dockerfile
+    dockerContext: velocity-engine/backend
     envVars:
       - key: PORT
         value: 5000
@@ -21,12 +19,12 @@ services:
           name: velocity-db
           property: connectionString
 
-  # UI DASHBOARD LAYER (React + Nginx frontend)
   - type: web
     name: velocity-frontend
     plan: free
     runtime: docker
-    dockerfilePath: frontend/Dockerfile # FIXED: Removed ./ prefix
+    dockerfilePath: velocity-engine/backend/frontend/Dockerfile
+    dockerContext: velocity-engine/backend/frontend
     envVars:
       - key: VITE_API_URL
         fromService:
