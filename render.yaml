@@ -1,9 +1,9 @@
-# 1. THE DATABASE LAYER (Declared in its own dedicated block)
+# 1. THE DATABASE LAYER
 databases:
   - name: velocity-db
     plan: free
     databaseName: velocity_db
-    user: postgres
+    user: velocity_admin # FIXED: Changed from 'postgres' to avoid system reserve conflicts
 
 # 2. THE COMPUTE & SERVICE LAYER
 services:
@@ -32,4 +32,4 @@ services:
         fromService:
           name: velocity-backend
           type: web
-          property: url
+          property: host # FIXED: Changed from 'url' to Render's valid 'host' resolution property
