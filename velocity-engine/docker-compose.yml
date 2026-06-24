@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Isolated Postgres Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: velocity_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: velocity123
+      POSTGRES_DB: velocity_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Node.js Backend REST API Service
+  backend:
+    build: ./backend
+    container_name: velocity_backend_api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:velocity123@db:5432/velocity_db
+    depends_on:
+      - db
+
+  # Vite-React User Interface Dashboard Service
+  frontend:
+    build: ./frontend
+    container_name: velocity_frontend_client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
