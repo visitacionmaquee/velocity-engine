@@ -1,12 +1,13 @@
-services:
-  # 1. THE DATABASE LAYER
-  - type: db
-    name: velocity-db
+# 1. THE DATABASE LAYER (Declared in its own dedicated block)
+databases:
+  - name: velocity-db
     plan: free
     databaseName: velocity_db
     user: postgres
 
-  # 2. THE ENGINE API LAYER (Node.js backend)
+# 2. THE COMPUTE & SERVICE LAYER
+services:
+  # ENGINE API LAYER (Node.js backend)
   - type: web
     name: velocity-backend
     plan: free
@@ -20,7 +21,7 @@ services:
           name: velocity-db
           property: connectionString
 
-  # 3. THE UI DASHBOARD LAYER (React + Nginx frontend)
+  # UI DASHBOARD LAYER (React + Nginx frontend)
   - type: web
     name: velocity-frontend
     plan: free
