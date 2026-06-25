@@ -6,16 +6,17 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const fetchAnalytics = async () => {
-    // FIX: Fallback to the production backend URL if the environment variable is undefined
-    const API_URL = import.meta.env.VITE_API_URL || 'https://velocity-backend-fdwh.onrender.com';
+    let API_URL = import.meta.env.VITE_API_URL;
+    
+    // Hard check: If the variable is missing, empty, or literally "undefined" as a string
+    if (!API_URL || API_URL === "" || API_URL.trim() === "undefined") {
+      API_URL = 'https://velocity-backend-fdwh.onrender.com';
+    }
     
     try {
-      // Use the resolved API_URL here
       const response = await fetch(`${API_URL}/api/metrics/analytics`);
-      
       if (!response.ok) throw new Error('Telemetry link exception.');
       const data = await response.json();
-      
       if (data.success) {
         setSystems(data.systems_health_grid);
         setError(null);
