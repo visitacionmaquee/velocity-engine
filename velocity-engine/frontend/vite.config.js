@@ -3,12 +3,11 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Load env file from the current directory, allowing empty string fallbacks to cross over
   const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [react()],
     define: {
-      'process.env': env
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'https://velocity-backend-fdwh.onrender.com')
     }
   }
 })
