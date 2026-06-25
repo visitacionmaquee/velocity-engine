@@ -6,10 +6,16 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const fetchAnalytics = async () => {
+    // FIX: Fallback to the production backend URL if the environment variable is undefined
+    const API_URL = import.meta.env.VITE_API_URL || 'https://velocity-backend-fdwh.onrender.com';
+    
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/metrics/analytics`);
+      // Use the resolved API_URL here
+      const response = await fetch(`${API_URL}/api/metrics/analytics`);
+      
       if (!response.ok) throw new Error('Telemetry link exception.');
       const data = await response.json();
+      
       if (data.success) {
         setSystems(data.systems_health_grid);
         setError(null);
