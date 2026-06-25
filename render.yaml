@@ -28,7 +28,6 @@ services:
     dockerContext: velocity-engine/frontend
     envVars:
       - key: VITE_API_URL
-        value: https://velocity-backend-fdwh.onrender.com
         fromService:
           name: velocity-backend
           type: web
