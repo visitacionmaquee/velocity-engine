@@ -9,12 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// FIXED: Use the single connection string provided by Render
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Required for Render-hosted PostgreSQL
+  }
 });
 
 // 1. Health & Dependency Validation Route
@@ -42,7 +42,7 @@ app.post('/api/metrics', async (req, res) => {
   }
 });
 
-// 3. Compute Real-Time System Averages for UI Dashboard
+// 3. Compute Real-Time System Averages
 app.get('/api/metrics/analytics', async (req, res) => {
   try {
     const analyticsQuery = `
@@ -66,28 +66,23 @@ app.get('/api/metrics/analytics', async (req, res) => {
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Velocity Engine Core running on port ${PORT}`));
 
-// AUTOMATED HARDWARE TELEMETRY HARVESTER (Runs every 3 seconds)
+// AUTOMATED HARDWARE TELEMETRY HARVESTER
 setInterval(async () => {
   try {
-    // 1. Calculate Real RAM Allocation
     const totalMemory = os.totalmem();
     const freeMemory = os.freemem();
     const realMemoryUsedPercentage = ((totalMemory - freeMemory) / totalMemory) * 100;
-
-    // 2. Calculate Real CPU Core Load
     const cpuCores = os.cpus().length || 1;
     const systemLoad = os.loadavg()[0];
     let realCpuPercentage = (systemLoad / cpuCores) * 100;
     
-    // Fallback/Jitter if loadavg is idling close to zero on windows hosts
     if (realCpuPercentage === 0) {
       realCpuPercentage = Math.floor(Math.random() * 12) + 5; 
     }
 
-    // 3. Automatically write real stats to the database matching correct schema
     const targetSystemIds = [1, 2, 3];
     
     for (const sysId of targetSystemIds) {
@@ -95,7 +90,6 @@ setInterval(async () => {
       const nodeRamJitter = Math.min(Math.max(realMemoryUsedPercentage + (sysId * 2 - 4), 5), 95);
       const simulatedLatency = Math.floor(Math.random() * 25) + 12 + (sysId * 5);
 
-      // FIXED: Table target and columns now match 'performance_metrics' schema perfectly
       await pool.query(
         `INSERT INTO performance_metrics (system_id, cpu_utilization, memory_utilization, network_latency_ms) 
          VALUES ($1, $2, $3, $4)`,
@@ -103,6 +97,7 @@ setInterval(async () => {
       );
     }
   } catch (err) {
-    console.error('Telemetry background harvester fault:', err.message);
+    // FIXED: Now logs full stack trace to help you identify if it's a connection or schema error
+    console.error('Telemetry background harvester fault:', err.stack);
   }
 }, 3000);
