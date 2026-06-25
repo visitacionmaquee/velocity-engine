@@ -6,12 +6,8 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const fetchAnalytics = async () => {
-    let API_URL = import.meta.env.VITE_API_URL;
-    
-    // Hard check: If the variable is missing, empty, or literally "undefined" as a string
-    if (!API_URL || API_URL === "" || API_URL.trim() === "undefined") {
-      API_URL = 'https://velocity-backend-fdwh.onrender.com';
-    }
+    // FORCE the full absolute URL to bypass the faulty container-side env variables completely
+    const API_URL = 'https://velocity-backend-fdwh.onrender.com';
     
     try {
       const response = await fetch(`${API_URL}/api/metrics/analytics`);
