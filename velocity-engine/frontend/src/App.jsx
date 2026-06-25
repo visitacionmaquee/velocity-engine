@@ -39,7 +39,7 @@ export default function App() {
 
   const isClusterInCrisis = systems.some(sys => parseFloat(sys.avg_cpu) >= 85 || parseFloat(sys.avg_memory) >= 85);
 
-  useEffect(() => {
+useEffect(() => {
     const styleId = "velocity-production-cyber-styles";
     if (document.getElementById(styleId)) return;
     const styleSheet = document.createElement("style");
@@ -54,29 +54,62 @@ export default function App() {
         font-family: 'Rajdhani', sans-serif;
         background-image: linear-gradient(rgba(18, 24, 38, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(18, 24, 38, 0.4) 1px, transparent 1px);
         background-size: 30px 30px;
+        overflow-x: hidden; /* Prevent horizontal container sway */
       }
-      .pulse-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px currentColor; animation: pulseAnimation 1.5s infinite alternate; }
+      .pulse-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 10px currentColor; animation: pulseAnimation 1.5s infinite alternate; }
       @keyframes pulseAnimation { 0% { transform: scale(0.9); opacity: 0.6; } 100% { transform: scale(1.2); opacity: 1; } }
       
-      /* MOBILE RESPONSIVE CONTAINER WITH FLUID PADDING */
-      .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+      /* GLOBAL FLUID CONTAINER */
+      .dashboard-container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 1rem;
+        box-sizing: border-box;
+      }
       @media (min-width: 768px) { .dashboard-container { padding: 2rem; } }
 
-      /* WRAPPING HEADER CONFIG FOR SMALL VIEWPORTS */
-      .cyber-header { border-bottom: 2px solid #1a2233; padding-bottom: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 15px; align-items: flex-start; }
-      @media (min-width: 768px) { .cyber-header { flex-direction: row; justify-content: space-between; align-items: center; } }
+      /* HEADER DESIGN RESPONSE AND ALIGNMENT CORRECTION */
+      .cyber-header { 
+        border-bottom: 2px solid #1a2233; 
+        padding-bottom: 1.5rem; 
+        margin-bottom: 1.5rem; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 12px; 
+        align-items: flex-start; 
+        width: 100%;
+      }
+      @media (min-width: 768px) { 
+        .cyber-header { 
+          flex-direction: row; 
+          justify-content: space-between; 
+          align-items: center; 
+        } 
+      }
 
-      .cyber-title { font-size: 1.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; background: linear-gradient(90deg, #00ffcc, #45f3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-      @media (min-width: 768px) { .cyber-title { font-size: 2.5rem; letter-spacing: 3px; } }
+      /* TITLE WRAPPING PREVENTER - CLAMPED FLUID SIZE */
+      .cyber-title { 
+        font-size: clamp(1.4rem, 6vw, 2.5rem); 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 2px; 
+        background: linear-gradient(90deg, #00ffcc, #45f3ff); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        margin: 0;
+        line-height: 1.2;
+        word-break: break-word;
+      }
+      @media (min-width: 768px) { .cyber-title { letter-spacing: 3px; } }
 
-      .crisis-banner { background: rgba(255, 62, 62, 0.15); border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px; border-radius: 6px; margin-bottom: 1.5rem; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 0.9rem; animation: bannerFlash 0.8s infinite alternate; }
+      .crisis-banner { background: rgba(255, 62, 62, 0.15); border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px; border-radius: 6px; margin-bottom: 1.5rem; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 0.85rem; animation: bannerFlash 0.8s infinite alternate; }
       @keyframes bannerFlash { 0% { background: rgba(255, 62, 62, 0.05); } 100% { background: rgba(255, 62, 62, 0.25); } }
       
-      /* RESPONSIVE LAYOUT GRID */
-      .grid-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+      /* STACKED GRID AT BREAKPOINTS */
+      .grid-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
       @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); } }
 
-      .cyber-card { background-color: #0f121d; border: 1px solid #1a233d; border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+      .cyber-card { background-color: #0f121d; border: 1px solid #1a233d; border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); box-sizing: border-box; }
       @media (min-width: 768px) { .cyber-card { padding: 1.5rem; } }
       .cyber-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #00ffcc, transparent); }
       .cyber-card-warning { border-color: #ffaa00 !important; }
@@ -85,28 +118,27 @@ export default function App() {
       .cyber-card-critical::before { background: linear-gradient(90deg, #ff3e3e, transparent) !important; }
       @keyframes cardSiren { 0% { box-shadow: 0 4px 20px rgba(0,0,0,0.5); } 100% { box-shadow: 0 0 25px rgba(255, 62, 62, 0.3); } }
       
-      .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1c2642; padding-bottom: 0.75rem; margin-bottom: 1rem; }
+      .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1c2642; padding-bottom: 0.75rem; margin-bottom: 1rem; gap: 10px; }
       .card-title { font-size: 1.2rem; font-weight: 700; text-transform: uppercase; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
-      .status-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+      .status-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; flex-shrink: 0; }
       
-      /* FLEX DIRECTION SWITCH BETWEEN VERTICAL ON PHONES & HORIZONTAL ON SCREENS */
-      .gauge-group { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; margin: 1.5rem 0; }
+      /* RESPONSIVE GAUGE LAYOUT CLOSING GAP SIZES */
+      .gauge-group { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; margin: 1.5rem 0; width: 100%; }
       @media (min-width: 480px) { .gauge-group { flex-direction: row; justify-content: space-around; } }
 
-      .metric-radial { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+      .metric-radial { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
       .radial-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
       .radial-bg { fill: none; stroke: #161a29; stroke-width: 8; }
       .radial-progress { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease-in-out; }
       .radial-value { position: absolute; font-family: 'Share Tech Mono', monospace; font-size: 1.25rem; font-weight: bold; color: #ffffff; }
       
-      /* FLUID RESPONSIVE WIDTH FOR CONTAINER BAR */
       .ram-container-block { width: 100%; }
       @media (min-width: 480px) { .ram-container-block { width: 50%; } }
 
-      .linear-meter-container { background-color: #121624; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+      .linear-meter-container { background-color: #121624; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; width: 100%; }
       .linear-meter-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease-in-out; }
       
-      .metrics-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; border-top: 1px solid #1c2642; padding-top: 0.75rem; color: #8c9bb0; }
+      .metrics-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; border-top: 1px solid #1c2642; padding-top: 0.75rem; color: #8c9bb0; width: 100%; }
     `;
     document.head.appendChild(styleSheet);
   }, []);
