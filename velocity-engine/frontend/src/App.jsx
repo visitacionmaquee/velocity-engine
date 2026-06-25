@@ -6,7 +6,7 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const fetchAnalytics = async () => {
-    // FORCE the full absolute URL to bypass the faulty container-side env variables completely
+    // FORCE the full absolute URL to bypass container-side environment bugs cleanly
     const API_URL = 'https://velocity-backend-fdwh.onrender.com';
     
     try {
@@ -57,31 +57,56 @@ export default function App() {
       }
       .pulse-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px currentColor; animation: pulseAnimation 1.5s infinite alternate; }
       @keyframes pulseAnimation { 0% { transform: scale(0.9); opacity: 0.6; } 100% { transform: scale(1.2); opacity: 1; } }
-      .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-      .cyber-header { border-bottom: 2px solid #1a2233; padding-bottom: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-      .cyber-title { font-size: 2.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; background: linear-gradient(90deg, #00ffcc, #45f3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-      .crisis-banner { background: rgba(255, 62, 62, 0.15); border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px; border-radius: 6px; margin-bottom: 1.5rem; font-family: 'Share Tech Mono', monospace; font-weight: bold; animation: bannerFlash 0.8s infinite alternate; }
+      
+      /* MOBILE RESPONSIVE CONTAINER WITH FLUID PADDING */
+      .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+      @media (min-width: 768px) { .dashboard-container { padding: 2rem; } }
+
+      /* WRAPPING HEADER CONFIG FOR SMALL VIEWPORTS */
+      .cyber-header { border-bottom: 2px solid #1a2233; padding-bottom: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 15px; align-items: flex-start; }
+      @media (min-width: 768px) { .cyber-header { flex-direction: row; justify-content: space-between; align-items: center; } }
+
+      .cyber-title { font-size: 1.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; background: linear-gradient(90deg, #00ffcc, #45f3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+      @media (min-width: 768px) { .cyber-title { font-size: 2.5rem; letter-spacing: 3px; } }
+
+      .crisis-banner { background: rgba(255, 62, 62, 0.15); border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px; border-radius: 6px; margin-bottom: 1.5rem; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 0.9rem; animation: bannerFlash 0.8s infinite alternate; }
       @keyframes bannerFlash { 0% { background: rgba(255, 62, 62, 0.05); } 100% { background: rgba(255, 62, 62, 0.25); } }
-      .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
-      .cyber-card { background-color: #0f121d; border: 1px solid #1a233d; border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+      
+      /* RESPONSIVE LAYOUT GRID */
+      .grid-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+      @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); } }
+
+      .cyber-card { background-color: #0f121d; border: 1px solid #1a233d; border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+      @media (min-width: 768px) { .cyber-card { padding: 1.5rem; } }
       .cyber-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #00ffcc, transparent); }
       .cyber-card-warning { border-color: #ffaa00 !important; }
       .cyber-card-warning::before { background: linear-gradient(90deg, #ffaa00, transparent) !important; }
       .cyber-card-critical { border-color: #ff3e3e !important; animation: cardSiren 1s infinite alternate; }
       .cyber-card-critical::before { background: linear-gradient(90deg, #ff3e3e, transparent) !important; }
       @keyframes cardSiren { 0% { box-shadow: 0 4px 20px rgba(0,0,0,0.5); } 100% { box-shadow: 0 0 25px rgba(255, 62, 62, 0.3); } }
+      
       .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1c2642; padding-bottom: 0.75rem; margin-bottom: 1rem; }
-      .card-title { font-size: 1.35rem; font-weight: 700; text-transform: uppercase; color: #ffffff; }
-      .status-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-      .gauge-group { display: flex; justify-content: space-around; align-items: center; margin: 1.5rem 0; }
+      .card-title { font-size: 1.2rem; font-weight: 700; text-transform: uppercase; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+      .status-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+      
+      /* FLEX DIRECTION SWITCH BETWEEN VERTICAL ON PHONES & HORIZONTAL ON SCREENS */
+      .gauge-group { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; margin: 1.5rem 0; }
+      @media (min-width: 480px) { .gauge-group { flex-direction: row; justify-content: space-around; } }
+
       .metric-radial { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
       .radial-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
       .radial-bg { fill: none; stroke: #161a29; stroke-width: 8; }
       .radial-progress { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease-in-out; }
       .radial-value { position: absolute; font-family: 'Share Tech Mono', monospace; font-size: 1.25rem; font-weight: bold; color: #ffffff; }
+      
+      /* FLUID RESPONSIVE WIDTH FOR CONTAINER BAR */
+      .ram-container-block { width: 100%; }
+      @media (min-width: 480px) { .ram-container-block { width: 50%; } }
+
       .linear-meter-container { background-color: #121624; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
       .linear-meter-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease-in-out; }
-      .metrics-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; border-top: 1px solid #1c2642; padding-top: 0.75rem; color: #8c9bb0; }
+      
+      .metrics-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; border-top: 1px solid #1c2642; padding-top: 0.75rem; color: #8c9bb0; }
     `;
     document.head.appendChild(styleSheet);
   }, []);
@@ -156,7 +181,8 @@ export default function App() {
                     <div style={{ marginTop: '0.75rem', fontWeight: 'bold', fontSize: '0.9rem', color: '#8c9bb0' }}>REAL CPU LOAD</div>
                   </div>
 
-                  <div style={{ width: '50%' }}>
+                  {/* SWAPPED TO RESPONSIVE CLASS NAME */}
+                  <div className="ram-container-block">
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem' }}>
                       <span style={{ color: '#ffffff' }}>HOST RAM</span>
                       <span style={{ color: status.color }}>{Math.round(mem)}%</span>
