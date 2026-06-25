@@ -7,7 +7,7 @@ export default function App() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch('https://velocity-backend-fdwh.onrender.com/api/metrics/analytics');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/metrics/analytics`);
       if (!response.ok) throw new Error('Telemetry link exception.');
       const data = await response.json();
       if (data.success) {
